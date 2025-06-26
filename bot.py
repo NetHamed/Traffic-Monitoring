@@ -78,9 +78,18 @@ def usage(update, context):
         update.message.reply_text("⛔ شما هنوز توسط مدیر ثبت نشده‌اید.")
         return
 
-    downloaded = get_port_download(port)
-    update.message.reply_text(f"📥 پورت {port}:
-🔻 دانلود: {downloaded:.2f} MB")
+    # پشتیبانی از چند پورت (در صورت نیاز، پورت‌ها را با , جدا کنید)
+    ports = port.split(',') if ',' in port else [port]
+
+    msg = "📥 مصرف دانلود:\n"
+    total = 0.0
+    for p in ports:
+        downloaded = get_port_download(p)
+        total += downloaded
+        msg += f"🔹 پورت {p}: {downloaded:.2f} MB\n"
+
+    msg += f"📊 مجموع: {total:.2f} MB"
+    update.message.reply_text(msg)
 
 def all_usage(update, context):
     if update.message.chat_id != ADMIN_CHAT_ID:
